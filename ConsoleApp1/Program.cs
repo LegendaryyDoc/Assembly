@@ -11,12 +11,12 @@ namespace ExternalLib
     {
         public void fileRead()
         {
-            string[,] roomsize;
+            Type[,] roomsize;
             int numberOfBlocks = 0;
             Type[] blocks;
             int idx = 0;
+            int cIntConverterFromChar = 0;
 
-            int state = -1;
             string[] text = System.IO.File.ReadAllLines("Map.txt");
 
             //string line
@@ -24,65 +24,59 @@ namespace ExternalLib
             //{
             //     line = text[idx];
             //}
-
-            foreach (string line in text)
+            string[] line;
+            roomsize = null;
+            blocks = null;
+            for (idx = 0; idx < text.Length; idx++)
             {
-                if (line == "[misc]")
-                {
-                    state = 0;
-                }
-                else if (line == "[block definitions]")
-                {
-                    state = 1;
-                }
-                else if (line == "[room definitions]")
-                {
-                    state = 2;
-                }
-                else if (line == "[end]")
-                {
-                    state = -1;
-                }
+                line = text;
 
-
-                switch (state)
+                switch (line[idx])
                 {
-                    case 0:
-                        string[] lineSplit = line.Split('=');
+                    case "[misc]":
+
+                        if(line[idx] == "[misc]")
+                        {
+                            idx++;
+                        }
+                        
+                        string[] lineSplit = line[idx].Split('=');
 
                         if (lineSplit[0] == "numberofblocks")
                         {
                             numberOfBlocks = int.Parse(lineSplit[1]);
                         }
+
+                        idx++;
+                        lineSplit = line[idx].Split('=');
+
                         if (lineSplit[0] == "roomsize")
                         {
                             string roomsizeNumbers = lineSplit[1];
                             string[] individualNumbers = roomsizeNumbers.Split(',');
-                            roomsize = new string[int.Parse(individualNumbers[0]), int.Parse(individualNumbers[1])];
+                            roomsize = new Type[int.Parse(individualNumbers[0]), int.Parse(individualNumbers[1])];
                         }
 
                         break;
 
-                    case 1:
+                    case "[block definitions]":
 
                         blocks = new Type[numberOfBlocks];
-                        if(line == "[block definitions]")
+                        if (line[idx] == "[block definitions]")
                         {
                             idx++;
                         }
 
-                        for (; line != "[end]";)
+                        for (; line[idx] != "[end]"; idx++)
                         {
-                            string[] lineSplit2 = line.Split('=');
+                            string[] lineSplit2 = line[idx].Split('=');
 
                             string namespaceFinder = lineSplit2[0];
                             string[] tempHolderNS = namespaceFinder.Split('.');
 
-                            Console.ReadLine();
-
                             if (tempHolderNS[0] == "ExternalLib")
                             {
-                                blocks[int.Parse(lineSplit2[1])] = Type.GetType(lineSplit2[0], false, true); 
+                                blocks[int.Parse(lineSplit2[1])] = Type.GetType(lineSplit2[0], false, true);
                             }
                             else
                             {
@@ -101,13 +95,36 @@ namespace ExternalLib
                         {
                             Console.WriteLine(blocks[i]);
                         }
-                        Console.ReadLine();
                         break;
 
-                    case 2:
+                    case "[room definitions]":
+                        if (line[idx] == "[room definitions]")
+                        {
+                            idx++;
+                        }
+
+                        int roomSizeY = 0;
+                        int roomSizeX = 0;
+                        for (; line[idx] != "[end]"; idx++)
+                        {    
+                            foreach(char c in line[idx])
+                            {
+                                cIntConverterFromChar = Convert.ToInt32(new string(c, 1));
+
+                                roomsize[roomSizeX, roomSizeY] = blocks[cIntConverterFromChar];
+                                roomSizeX++;
+                            }
+                            roomSizeX = 0;
+                            roomSizeY++; // adds to the row every time a line goes through
+                        }
+
+                        foreach (Type grid in roomsize)
+                        {
+                            Console.WriteLine(grid);
+                        }
+
                         break;
                 }
-                ++idx;
             }
         }
 
@@ -119,7 +136,7 @@ namespace ExternalLib
             string workingDir = System.IO.Directory.GetCurrentDirectory();
             string dllFileName = "/ExternalLib.dll";
             string extClass = "ExternalLib.MyExternalClass";
-            string extMethod = "fileRead";
+            string extMethod = "TestHelloWorld";
 
             //First load the external assembly
             Assembly ass = Assembly.LoadFile(workingDir + dllFileName);

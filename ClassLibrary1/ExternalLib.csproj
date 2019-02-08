@@ -5,7 +5,11 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <OutputPath>bin\Debug\netstandard2.0\ExternalLib.dll</OutputPath>
+    <OutputPath></OutputPath>
   </PropertyGroup>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="copy $(OutDir)$(TargetFileName) C:\Users\s189065\source\repos\ExternalLib\ConsoleApp1\bin\Debug\$(TargetFileName)" />
+  </Target>
 
 </Project>

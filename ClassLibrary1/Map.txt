@@ -1,0 +1,25 @@
+##this is a comment, the block definitions represent different classes.
+##This allows us to be flexible in our map.
+
+[misc]
+numberofblocks=4
+roomsize=9,7
+[end]
+
+[block definitions]
+Exercise1.wall=0
+Exercise1.door=1
+Exercise1.walkable=2
+AdditionalLib.Pit=3
+[end]
+
+##these numbers relate to the block definitions.
+[room definitions]
+000010000
+022222220
+022232220
+022222220
+022222220
+022222220
+000000000
+[end]
